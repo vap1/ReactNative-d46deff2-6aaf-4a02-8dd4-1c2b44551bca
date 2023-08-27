@@ -1,0 +1,40 @@
+
+import React, { useState } from 'react';
+import { View, Text, TextInput, Button } from 'react-native';
+import { SearchRequest, SearchResponse } from '../types/SearchTypes';
+import { search } from '../apis/SearchApi';
+import { User } from '../types/UserTypes';
+import SearchResults from '../components/SearchResults';
+
+const SearchScreen: React.FC = () => {
+  const [keyword, setKeyword] = useState('');
+  const [searchResults, setSearchResults] = useState<User[]>([]);
+
+  const handleSearch = async () => {
+    try {
+      const request: SearchRequest = {
+        keyword: keyword,
+      };
+
+      const response: SearchResponse = await search(request);
+      setSearchResults(response.searchResults);
+    } catch (error) {
+      console.error('Error searching:', error);
+    }
+  };
+
+  return (
+    <View>
+      <Text>Search Screen</Text>
+      <TextInput
+        placeholder="Enter keyword"
+        value={keyword}
+        onChangeText={setKeyword}
+      />
+      <Button title="Search" onPress={handleSearch} />
+      <SearchResults searchResults={searchResults} />
+    </View>
+  );
+};
+
+export default SearchScreen;
